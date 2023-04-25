@@ -12,6 +12,6 @@ WORKDIR /app
 
 COPY --from=build /app/dispatcher ./
 COPY --from=build /app/static ./static
-RUN chmod -R 777 staticll
+RUN chmod -R 777 static
 
 CMD ["./dispatcher"]
