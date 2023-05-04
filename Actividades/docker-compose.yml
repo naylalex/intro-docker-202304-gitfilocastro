@@ -1,0 +1,39 @@
+version: "3"
+services:
+  words:
+    build: words/.
+    container_name: words
+    ports:
+      # These ports are in format <host-port>:<container-port>
+      - '8080:8080'
+    volumes:
+      - /var/lib/docker/volumes/words:/data/words
+    networks:
+      - test
+  db:
+    build: db/.
+
+    restart: unless-stopped
+    container_name: db_container
+    volumes:
+      - /var/lib/docker/volumes/postgress:/var/lib/postgress
+    networks:
+      - test
+    depends_on:
+      - words
+    ports:
+      - '5432:5432'
+
+  web:
+    build: web/.
+    restart: always
+    ports:
+      - '80:80'
+    volumes:
+      - /var/lib/docker/volumes/web:/www/web
+    networks:
+      - test
+
+networks:
+  test:
+    driver: bridge
