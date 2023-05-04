@@ -1,25 +1,20 @@
 version: "3"
 services:
   words:
-    build: ./DockerFile_words
-    restart: always
+    build: words/.
     container_name: words
     ports:
       # These ports are in format <host-port>:<container-port>
       - '8080:8080'
-    environment:
-      # 
     volumes:
       - /var/lib/docker/volumes/words:/data/words
     networks:
       - test
   db:
-    build: ./DockerFile_db
+    build: db/.
+
     restart: unless-stopped
     container_name: db_container
-    environment:
-      ENV POSTGRES_PASSWORD "docker"
-      ENV POSTGRES_DB "world"
     volumes:
       - /var/lib/docker/volumes/postgress:/var/lib/postgress
     networks:
@@ -30,7 +25,7 @@ services:
       - '5432:5432'
 
   web:
-    build: ./DockerFile_web
+    build: web/.
     restart: always
     ports:
       - '80:80'
