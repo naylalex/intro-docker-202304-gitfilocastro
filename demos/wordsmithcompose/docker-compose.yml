@@ -1,16 +1,44 @@
-version: "3.9"
+version: "3"
 services:
-  web:
-    build: web/
-    ports:
-      - "80:80"
   words:
-    build: words/
-  db:
-    build: db/
+    build: ./DockerFile_words
+    restart: always
+    container_name: words
+    ports:
+      # These ports are in format <host-port>:<container-port>
+      - '8080:8080'
     environment:
-      PGDATA: pg
-      POSTGERS_USER: postgres
-      POSTGRES_PASSWORD: 
-      POSTGRES_DB: postgres
-      POSTGRES_HOST_AUTH_METHOD: trust
+      # 
+    volumes:
+      - /var/lib/docker/volumes/words:/data/words
+    networks:
+      - test
+  db:
+    build: ./DockerFile_db
+    restart: unless-stopped
+    container_name: db_container
+    environment:
+      ENV POSTGRES_PASSWORD "docker"
+      ENV POSTGRES_DB "world"
+    volumes:
+      - /var/lib/docker/volumes/postgress:/var/lib/postgress
+    networks:
+      - test
+    depends_on:
+      - words
+    ports:
+      - '5432:5432'
+
+  web:
+    build: ./DockerFile_web
+    restart: always
+    ports:
+      - '80:80'
+    volumes:
+      - /var/lib/docker/volumes/web:/www/web
+    networks:
+      - test
+
+networks:
+  test:
+    driver: bridge
